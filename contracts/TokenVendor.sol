@@ -50,7 +50,7 @@ contract TokenVendor is Ownable {
         i_owner = msg.sender;
     }
 
-    //DoneZo
+    
     function buyTokens(uint256 _amountToBuy) public payable {
         uint256 tokenAmount = _amountToBuy * pricePerEth;
         require(msg.value >= tokenAmount, "Insufficient Payment");
@@ -58,7 +58,7 @@ contract TokenVendor is Ownable {
         emit TokensBought(msg.sender, tokenAmount);
     }
 
-    //DoneZo
+    
     function sellTokens(uint256 _amountToSell) public {
         require(_amountToSell > 0, "Please input a valid amount");
         require(
@@ -71,7 +71,7 @@ contract TokenVendor is Ownable {
         emit TokensSold(msg.sender, _amountToSell);
     }
 
-    //DoneZo
+    
     function depositCollateral(uint256 _collateralAmount) public {
         require(
             _collateralAmount > 0,
@@ -87,7 +87,7 @@ contract TokenVendor is Ownable {
         emit CollateralDeposited(msg.sender, _collateralAmount);
     }
 
-    //DoneZo
+    
     function withdrawCollateral(
         uint256 _amount
     ) public WithdrawOnlyIfDeposited {
@@ -102,7 +102,7 @@ contract TokenVendor is Ownable {
         emit CollateralWithdrawn(msg.sender, _amount);
     }
 
-    //DoneZo
+    
     function borrowMyToken(uint256 _amountToBorrow) public {
         require(_amountToBorrow > 0, "No valid amount");
         require(
@@ -136,7 +136,7 @@ contract TokenVendor is Ownable {
         emit TokensBorrowed(msg.sender, _amountToBorrow);
     }
 
-    //DoneZo
+    
     function repayMyToken(uint256 _repayAmount) public {
         require(_repayAmount > 0, "enter sufficient amount");
         uint256 borrowedTokens = s_addressToBorrowedTokens[msg.sender];
