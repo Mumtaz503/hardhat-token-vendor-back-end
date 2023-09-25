@@ -1,10 +1,10 @@
+require("@nomicfoundation/hardhat-toolbox");
+require("@nomicfoundation/hardhat-verify");
+require('hardhat-gas-reporter');
 require("hardhat-deploy");
-require("@nomiclabs/hardhat-waffle");
-require("@nomiclabs/hardhat-etherscan");
-require("solidity-coverage");
-require("hardhat-gas-reporter");
-require("hardhat-contract-sizer");
-require("dotenv").config();
+require('@nomicfoundation/hardhat-ethers');
+require('hardhat-deploy-ethers');
+require('dotenv').config();
 
 const PRIVATE_KEY = process.env.PRIVATE_KEY;
 const SEPOLIA_RPC_URL = process.env.SEPOLIA_RPC_URL;
@@ -59,7 +59,7 @@ module.exports = {
   solidity: {
     compilers: [
       {
-        version: "0.8.7",
+        version: "0.8.18",
       },
       {
         version: "0.6.12",

@@ -1,4 +1,4 @@
-const { assert } = require("chai");
+const { assert, expect } = require("chai");
 const { deployments, ethers, getNamedAccounts } = require("hardhat");
 
 describe("Token Vendor Unit Tests", function () {
@@ -29,6 +29,52 @@ describe("Token Vendor Unit Tests", function () {
         it("Should set deployer as the owner", async function () {
             const ownerAddress = await tokenVendor.getOwner();
             assert.equal(ownerAddress, deployer);
+        });
+    });
+    
+    describe("buyTokens function", function () {
+        it("Should revert if no payment is not sent", async function () {
+            const tokenAmountToBuy = 10;
+            await expect(tokenVendor.buyTokens(tokenAmountToBuy, {value: 0})).to.be.revertedWith("Insufficient Payment");
+        });
+        it("Should revert if insufficient payment is sent", async function () {
+            const tokenAmountToBuy = BigInt(10);
+            const pricePerEth = BigInt(300000);
+            const payment = (tokenAmountToBuy * pricePerEth) - BigInt(10);
+            await expect(tokenVendor.buyTokens(tokenAmountToBuy, {value: payment})).to.be.revertedWith("Insufficient Payment");
+        });
+        it("Should send the user the required amount from the contract", async function () {
+            const amountToMint = BigInt(50);
+            const tokenAmountToBuy = BigInt(20);
+            const pricePerEth = BigInt(300000);
+            const payment = (tokenAmountToBuy * pricePerEth);
+
+            await myToken.mint(tokenVendor.target, amountToMint);
+            await tokenVendor.buyTokens(tokenAmountToBuy, {value: payment});
+
+            const remainingContractBalance = await myToken.balanceOf(tokenVendor.target);
+            const buyerBalance = await myToken.balanceOf(deployer);
+
+            assert(remainingContractBalance < amountToMint);
+            assert.equal((amountToMint - remainingContractBalance), buyerBalance);
+        });
+        it("Should mint the required amount to the buyer from 'MyToken' contract", async function () {
+            const tokenAmountToBuy = BigInt(20);
+            const pricePerEth = BigInt(300000);
+            const payment = (tokenAmountToBuy * pricePerEth);
+
+            await tokenVendor.buyTokens(tokenAmountToBuy, {value: payment});
+            
+            const buyerBalance = await myToken.balanceOf(deployer);
+
+            assert.equal(buyerBalance, tokenAmountToBuy);
+        });
+        it("Should emit an event upon minting of tokens", async function () {
+            const tokenAmountToBuy = BigInt(20);
+            const pricePerEth = BigInt(300000);
+            const payment = (tokenAmountToBuy * pricePerEth);
+
+            await expect(tokenVendor.buyTokens(tokenAmountToBuy, {value: payment})).to.emit(tokenVendor, "TokensBought");
         });
     });
 });

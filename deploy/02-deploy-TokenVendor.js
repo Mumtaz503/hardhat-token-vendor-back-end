@@ -12,14 +12,14 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     const chainId = network.config.chainId;
     let arguments;
 
-    const myToken = await deployments.get("MyToken");
+    const myToken = await ethers.getContract("MyToken");
 
     if (developmentChains.includes(network.name)) {
-        const weth9 = await deployments.get("WETH9Mock");
-        arguments = [myToken.address, pricePerETH, weth9.address, collateralPerToken, minCollateral];
+        const weth9 = await ethers.getContract("WETH9Mock");
+        arguments = [myToken.target, pricePerETH, weth9.target, collateralPerToken, minCollateral];
     } else {
         const wethTokenAddress = networkConfig[chainId]["wethAddress"];
-        arguments = [myToken.address, pricePerETH, wethTokenAddress, collateralPerToken, minCollateral];
+        arguments = [myToken.target, pricePerETH, wethTokenAddress, collateralPerToken, minCollateral];
     }
 
     log("deploying contract please wait");
@@ -31,11 +31,11 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
         log: true,
     });
 
-    log(`Contract successfully deployed at ${tokenVendor.address}`);
+    log(`Contract successfully deployed at ${tokenVendor.target}`);
 
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
         log("verifying contract please wait...");
-        await verify(tokenVendor.address, arguments);
+        await verify(tokenVendor.target, arguments);
         log("contract succesfully verified");
     }
 

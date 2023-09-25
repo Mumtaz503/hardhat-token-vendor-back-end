@@ -14,7 +14,7 @@ const networkConfig = {
 
 const collateralPerToken = ethers.parseEther("0.005");
 const minCollateral = ethers.parseEther("0.1");
-const pricePerETH = "300";
+const pricePerETH = "300000";
 const tokenName = "MyToken";
 const tokenSymbol = "MT";
 const developmentChains = ["hardhat", "localhost"];

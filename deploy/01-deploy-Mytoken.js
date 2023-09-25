@@ -1,4 +1,4 @@
-const { network } = require("hardhat");
+const { network, ethers } = require("hardhat");
 const { tokenName, tokenSymbol, developmentChains, networkConfig } = require("../helper-hardhat-config");
 const { verify } = require("../utils/verification");
 
@@ -9,8 +9,8 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     let arguments;
 
     if (developmentChains.includes(network.name)) {
-        const weth9 = await deployments.get("WETH9Mock");
-        arguments = [tokenName, tokenSymbol, weth9.address];
+        const weth9 = await ethers.getContract("WETH9Mock");
+        arguments = [tokenName, tokenSymbol, weth9.target];
     } else {
         const wethTokenAddress = networkConfig[chainId]["wethAddress"];
         arguments = [tokenName, tokenSymbol, wethTokenAddress];
@@ -28,7 +28,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
 
     if (!developmentChains.includes(network.name) && process.env.ETHERSCAN_API_KEY) {
         log("verifying contract please wait...");
-        await verify(myToken.address, arguments);
+        await verify(myToken.target, arguments);
         log("contract succesfully verified");
     }
 
