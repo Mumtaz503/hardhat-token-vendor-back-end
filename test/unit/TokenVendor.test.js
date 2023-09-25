@@ -59,15 +59,19 @@ describe("Token Vendor Unit Tests", function () {
             assert.equal((amountToMint - remainingContractBalance), buyerBalance);
         });
         it("Should mint the required amount to the buyer from 'MyToken' contract", async function () {
-            const tokenAmountToBuy = BigInt(20);
+            const amountToMint = BigInt(50);
+            const tokenAmountToBuy = BigInt(100);
             const pricePerEth = BigInt(300000);
             const payment = (tokenAmountToBuy * pricePerEth);
 
+            await myToken.mint(tokenVendor.target, amountToMint);
             await tokenVendor.buyTokens(tokenAmountToBuy, {value: payment});
             
+            const remainingContractBalance = await myToken.balanceOf(tokenVendor.target);
             const buyerBalance = await myToken.balanceOf(deployer);
 
             assert.equal(buyerBalance, tokenAmountToBuy);
+            assert.equal(remainingContractBalance, amountToMint);
         });
         it("Should emit an event upon minting of tokens", async function () {
             const tokenAmountToBuy = BigInt(20);
