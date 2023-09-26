@@ -60,11 +60,17 @@ contract TokenVendor is Ownable {
     }
 
     function sellTokens(uint256 _amountToSell) public {
+        uint256 ethAmount = _amountToSell.div(pricePerEth);
         require(_amountToSell > 0, "Please input a valid amount");
         require(s_myToken.balanceOf(msg.sender) >= _amountToSell, "Insufficient Balance");
+        require(
+            s_myToken.allowance(msg.sender, address(this)) >= _amountToSell,
+            "Allowance exceeded"
+        );
+        require(address(this).balance >= ethAmount, "Insufficient contract balance");
         s_myToken.transferFrom(msg.sender, address(this), _amountToSell);
-        uint256 ethAmount = _amountToSell.div(pricePerEth);
-        payable(msg.sender).transfer(ethAmount);
+        (bool success, ) = payable(msg.sender).call{value: ethAmount}("");
+        require(success, "Something went wrong");
         emit TokensSold(msg.sender, _amountToSell);
     }
 
