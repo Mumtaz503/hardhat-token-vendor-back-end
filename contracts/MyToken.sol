@@ -19,9 +19,9 @@ contract MyToken is ERC20, IMyToken {
         _mint(to, amount);
     }
 
-    function mintWithWeth(uint256 _amount) public {
-        require(_amount > 0, "Please send a valid amount");
-        IERC20(wethAddress).transferFrom(msg.sender, address(this), _amount);
-        _mint(msg.sender, _amount);
-    }
+//    function mintWithWeth(uint256 _amount) public {
+//        require(_amount > 0, "Please send a valid amount");
+//        IERC20(wethAddress).transferFrom(msg.sender, address(this), _amount);
+//        _mint(msg.sender, _amount);
+//    }
 }
